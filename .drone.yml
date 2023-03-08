@@ -9,7 +9,7 @@ steps:
   image: node:alpine
   commands:
   - node --version
-  - npm install --global yarn
+  # - npm install --global yarn
   - cd frontend
   - ls -la
   - yarn --version
@@ -22,32 +22,41 @@ steps:
 
 - name: build-backend
   image: rust:latest
+  environment:
+    CARGO_HOME: /var/cache/drone/cargo
   commands:
   - cargo --version
-  - cargo build --out-dir /result --release
+  - cd backend
+  - cargo build --release
+  - ls -la ./target/release
+  - cp ./target/release/backend /result
   - ls -la /result
   volumes:
   - name: result
     path: /result
+  - name: rust_cache
+    path: /var/cache/drone/cargo
 
 - name: build docker
   image: docker
   environment:
     CI_REGISTRY_USER:
-      from_secret: CI_REGISTRY_USER
+      from_secret: CI_HUB_USER
     CI_REGISTRY_PASSWORD:
-      from_secret: CI_REGISTRY_PASSWORD
+      from_secret: CI_HUB_PASSWORD
     CI_REGISTRY:
       from_secret: CI_REGISTRY
   commands:
   - export VERSION=$version
-  - ls -la
-  - docker build -t $CI_REGISTRY/thisseanzhang/gpt-ui:$${VERSION} .
+  - cp -r /result ./
+  - chmod a+x result/backend
+  - ls -la result
+  - docker build -t thisseanzhang/gpt-ui:$${VERSION} .
   - docker images
-  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-  - docker push $CI_REGISTRY/thisseanzhang/gpt-ui:$${VERSION}
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD
+  - docker push thisseanzhang/gpt-ui:$${VERSION}
   - docker logout $CI_REGISTRY
-  - docker rmi $CI_REGISTRY/thisseanzhang/gpt-ui:$${VERSION}
+  - docker rmi thisseanzhang/gpt-ui:$${VERSION}
   volumes:
   - name: docker
     path: /var/run/docker.sock
@@ -61,7 +70,9 @@ volumes:
 - name: docker
   host:
     path: /var/run/docker.sock
-
+- name: rust_cache
+  host:
+    path: /tmp/rust_cache
 node:
-  whileaway: blog
+  la24: latest
 
