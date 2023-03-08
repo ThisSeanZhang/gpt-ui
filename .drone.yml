@@ -1,0 +1,67 @@
+kind: pipeline
+type: docker
+name: default
+
+environment:
+  version: 0.0.1
+steps:
+- name: build-frontend
+  image: node:alpine
+  commands:
+  - node --version
+  - npm install --global yarn
+  - cd frontend
+  - ls -la
+  - yarn --version
+  - yarn
+  - yarn build --outDir /result/static/
+  - ls -la /result
+  volumes:
+  - name: result
+    path: /result
+
+- name: build-backend
+  image: rust:latest
+  commands:
+  - cargo --version
+  - cargo build --out-dir /result --release
+  - ls -la /result
+  volumes:
+  - name: result
+    path: /result
+
+- name: build docker
+  image: docker
+  environment:
+    CI_REGISTRY_USER:
+      from_secret: CI_REGISTRY_USER
+    CI_REGISTRY_PASSWORD:
+      from_secret: CI_REGISTRY_PASSWORD
+    CI_REGISTRY:
+      from_secret: CI_REGISTRY
+  commands:
+  - export VERSION=$version
+  - ls -la
+  - docker build -t $CI_REGISTRY/thisseanzhang/gpt-ui:$${VERSION} .
+  - docker images
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  - docker push $CI_REGISTRY/thisseanzhang/gpt-ui:$${VERSION}
+  - docker logout $CI_REGISTRY
+  - docker rmi $CI_REGISTRY/thisseanzhang/gpt-ui:$${VERSION}
+  volumes:
+  - name: docker
+    path: /var/run/docker.sock
+  - name: result
+    path: /result
+
+
+volumes:
+- name: result
+  temp: {}
+- name: docker
+  host:
+    path: /var/run/docker.sock
+
+node:
+  whileaway: blog
+
