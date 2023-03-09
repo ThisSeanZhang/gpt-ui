@@ -25,7 +25,7 @@ struct Args {
 
     #[arg(value_name = "IP:PORT",
         long,
-        default_value = "127.0.0.1:65525",
+        default_value = "0.0.0.0:65525",
     )]
     addr: SocketAddr,
 
@@ -83,7 +83,7 @@ async fn main() -> std::io::Result<()> {
     let web_path = args.web_path.unwrap_or_else(|| get_default_web_root().unwrap());
 
     info!("using webroot folder: {:?}", web_path);
-    info!("listening address: {:?}", web_path);
+    info!("listening address: {:?}", args.addr);
     
     HttpServer::new(move ||  {
         App::new()
