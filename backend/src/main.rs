@@ -9,7 +9,7 @@ use async_openai::Client;
 #[macro_use]
 extern crate log;
 
-use crate::api::{ChatReq, ChatResp};
+use crate::{api::{ChatReq, ChatResp}, error::GPTError};
 mod api;
 mod error;
 
@@ -41,6 +41,10 @@ async fn request_model(clients: web::Data<Mutex<HashMap<String, Client>>>, chat_
     info!("Request: {chat_req:?}");
     let token = chat_req.0.token.clone();
 
+    if token.len() == 0 {
+        return HttpResponse::BadRequest().body("请填入 API KEY");
+    }
+
     let client = {
         if let Ok(mut clients_lock) = clients.try_lock() {
             clients_lock.entry(token.clone()).or_insert_with(|| {
@@ -48,23 +52,33 @@ async fn request_model(clients: web::Data<Mutex<HashMap<String, Client>>>, chat_
                 client.with_api_key(token)
             }).clone()
         } else {
-            return HttpResponse::NotFound().body("Not Found")
+            return HttpResponse::ServiceUnavailable().body(GPTError::ServerIsBusy.to_string())
         }
     };
-    let resp = if let Ok(req) = chat_req.0.into_chat_req() {
-        let resp = client.chat().create(req).await;
-        drop(client);
-        resp
-    } else {
-        return HttpResponse::NotFound().body("Not Found")
+
+    let resp = match  chat_req.0.into_chat_req() {
+        Ok(req) => {
+            let resp = client.chat().create(req).await;
+            drop(client);
+            match resp {
+                Ok(resp) => Ok(resp),
+                Err(e) => Err(GPTError::OpenAIError(e))
+            }
+        },
+        Err(e) => {
+            Err(e)
+        }
     };
 
-    if let Ok(resp) = resp {
-        let resp = ChatResp::from_chatresp(resp);
-        info!("Response: {resp:?}");
-        HttpResponse::Ok().json(resp)
-    } else {
-        HttpResponse::NotFound().body("Not Found")
+    match resp {
+        Ok(resp) => {
+            let resp = ChatResp::from_chatresp(resp);
+            info!("Response: {resp:?}");
+            HttpResponse::Ok().json(resp)
+        },
+        Err(e) => {
+            HttpResponse::InternalServerError().body(e.to_string())
+        }
     }
 }
 

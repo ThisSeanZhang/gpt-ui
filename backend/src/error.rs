@@ -15,6 +15,10 @@ pub enum GPTError {
     
     #[error("Unexpected Role")]
     UnexpectedRole,
+
+    #[error("Server Is Busy Now")]
+    ServerIsBusy,
+
 }
 
 /// Result type for kvs.

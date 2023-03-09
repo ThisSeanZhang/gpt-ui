@@ -4,6 +4,7 @@ import { ref } from 'vue'
 import api from '../api'
 import { ChatReq, Message, ExhibitMessage, ChatResp, RespChoice, RespUsage } from '../api/chat';
 import { Delete, Copy } from '@vicons/carbon'
+import { AxiosError } from 'axios';
 
 const notification = useNotification()
 
@@ -20,21 +21,21 @@ const model_options = [
     label: 'gpt-3.5-turbo-0301',
     value: 'gpt-3.5-turbo-0301'
   },
-  {
-    label: 'text-davinci-003',
-    value: 'text-davinci-003'
-  },
-  {
-    label: 'text-davinci-002',
-    value: 'text-davinci-002'
-  },
-  {
-    label: 'code-davinci-002',
-    value: 'code-davinci-002'
-  },
+  // {
+  //   label: 'text-davinci-003',
+  //   value: 'text-davinci-003'
+  // },
+  // {
+  //   label: 'text-davinci-002',
+  //   value: 'text-davinci-002'
+  // },
+  // {
+  //   label: 'code-davinci-002',
+  //   value: 'code-davinci-002'
+  // },
 ];
 const user_messgae = ref<string>("")
-const character_setting = ref("你是一个很棒助手")
+const character_setting = ref("你是一个很棒的助手")
 const submitable = ref(false)
 const history = ref<ExhibitMessage[]>([]);
 
@@ -46,7 +47,7 @@ async function submit(force: boolean = false) {
     if (message.length <= 0) {
       notification.error({
         duration: 1000,
-        content: `发送的消息不能为空白`
+        content: `无法发送空白的消息`
       })
       return;
     }
@@ -92,10 +93,14 @@ async function submit(force: boolean = false) {
       content: '请求成功, []~(￣▽￣)~*'
     })
   } catch (e) {
+    let message = e;
+    if (e instanceof AxiosError) {
+      message = e.response?.data;
+    }
     console.log(e);
     notification.error({
       duration: 5000,
-      content: `请求失败, ${e}`
+      content: `请求失败, ${message}`
     })
   } finally {
     submitable.value = false
