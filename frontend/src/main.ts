@@ -21,6 +21,9 @@ import {
   NGi,
   NUpload,
   NThing,
+  NIcon,
+  NPopconfirm,
+  NSpin,
 } from 'naive-ui'
 
 const naive = create({
@@ -41,6 +44,9 @@ components: [
   NGi,
   NUpload,
   NThing,
+  NIcon,
+  NPopconfirm,
+  NSpin,
 ]
 })
 

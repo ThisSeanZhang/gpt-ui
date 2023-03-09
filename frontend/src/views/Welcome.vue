@@ -1,13 +1,16 @@
 <script setup lang="ts">
-import { UploadFileInfo } from 'naive-ui';
+import { UploadFileInfo, useNotification } from 'naive-ui';
 import { ref } from 'vue'
 import api from '../api'
 import { ChatReq, Message, ExhibitMessage, ChatResp, RespChoice, RespUsage } from '../api/chat';
+import { Delete, Copy } from '@vicons/carbon'
+
+const notification = useNotification()
 
 const token = ref("")
 const token_label = ref("")
 const model_choice = ref("gpt-3.5-turbo")
-const temperature = ref(0)
+const temperature = ref(6)
 const model_options = [
   {
     label: 'gpt-3.5-turbo',
@@ -41,6 +44,10 @@ async function submit(force: boolean = false) {
     const message = user_messgae.value.trim();
     user_messgae.value = "";
     if (message.length <= 0) {
+      notification.error({
+        duration: 1000,
+        content: `发送的消息不能为空白`
+      })
       return;
     }
     history.value.push(new ExhibitMessage({speaker: "user", text: message}));
@@ -49,6 +56,13 @@ async function submit(force: boolean = false) {
   submitable.value = true;
   try {
     let data = buildRequest();
+    if (data.messages.length <= 1) {
+      notification.error({
+        duration: 1000,
+        content: `没有选中任何消息`
+      })
+      return;
+    }
     console.log(data);
     let result = await api({
       method: 'post',
@@ -73,9 +87,16 @@ async function submit(force: boolean = false) {
     );
     console.log(chatResp);
     history.value = history.value.concat(chatResp.choices.map(e => e.message).map(ExhibitMessage.from))
-    
+    notification.success({
+      duration: 1000,
+      content: '请求成功, []~(￣▽￣)~*'
+    })
   } catch (e) {
     console.log(e);
+    notification.error({
+      duration: 5000,
+      content: `请求失败, ${e}`
+    })
   } finally {
     submitable.value = false
   }
@@ -114,6 +135,28 @@ function fileChange(options: { file: UploadFileInfo, fileList: Array<UploadFileI
       }
     };
     reader.readAsText(file);
+  }
+}
+function clean_history(index?: number) {
+  if (index !== undefined) {
+    history.value.splice(index, 1);
+  } else {
+    history.value = [];
+  }
+}
+
+async function copy_text(index: number) {
+  try {
+    await navigator.clipboard.writeText(history.value[index].text);
+    notification.success({
+      duration: 1000,
+      content: '复制成功, []~(￣▽￣)~*'
+    })
+  } catch (e) {
+    notification.error({
+      duration: 1000,
+      content: `复制失败: ${e}`
+    })
   }
 }
 </script>
@@ -163,14 +206,25 @@ function fileChange(options: { file: UploadFileInfo, fileList: Array<UploadFileI
     </n-grid>
   </n-layout-header>
   <!-- head end -->
-  <n-layout-content content-style="padding: 24px;">
-    <n-thing content-indented  v-for="each in history" style="margin: 5px 0px; border: 0 solid">
+  <n-layout-content style="height: calc(100% - 164px)" content-style="padding: 24px;" :native-scrollbar=false >
+    <n-thing content-indented  v-for="(each, index) of history" style="margin: 5px 0px; border: 0 solid">
       <template #avatar>
-        <n-space>
-          <n-checkbox @update:checked="check => each.select = check " :checked="each.select.valueOf()"></n-checkbox>
-          {{each.speaker}}
-        </n-space>
+        <n-checkbox @update:checked="check => each.select = check " :checked="each.select.valueOf()" />
       </template>
+      <template #header>
+        {{each.exhibit_speaker}}
+      </template>
+    <template #header-extra>
+      <n-space>
+        <n-popconfirm :show-icon="false" negative-text="取消" positive-text="确定" @positive-click="clean_history(index)">
+          <template #trigger>
+            <n-button text type="error"><n-icon><Delete /></n-icon></n-button>
+          </template>
+          确认删除?
+        </n-popconfirm>
+        <n-button text type="info" @click="copy_text(index)"><n-icon><Copy /></n-icon></n-button>
+      </n-space>
+    </template>
       {{ each.text }}
     </n-thing>
   </n-layout-content>
@@ -180,21 +234,33 @@ function fileChange(options: { file: UploadFileInfo, fileList: Array<UploadFileI
       <n-gi :span="16" style="display: flex; justify-content: center;align-items: center;">
         <n-input v-model:value="user_messgae" type="textarea" rows="2" placeholder="请在此处输入对话"/>
       </n-gi>
-      <n-gi :span="2" style="display: flex; justify-content: center;align-items: center;">
+      <n-gi :span="2">
+        <n-spin :show="submitable" style="display: flex; justify-content: center;align-items: center;">
+          <n-space vertical justify="space-between" align="center">
+            <n-button type="primary" :disabled="submitable" @click="submit()">
+              提交
+            </n-button>
+            <n-button type="primary" dashed :disabled="submitable" @click="submit(true)">
+              再生成一次
+            </n-button>
+          </n-space>
+        </n-spin>
+      </n-gi>
+      <n-gi :span="1" style="display: flex; justify-content: center;align-items: center;">
         <n-space vertical justify="space-between" align="center">
-          <n-button type="primary" :disabled="submitable" @click="submit()">
-            提交
-          </n-button>
-          <n-button type="primary" dashed :disabled="submitable" @click="submit(true)">
-            再生成一次
-          </n-button>
+          <n-popconfirm :show-icon="false" negative-text="取消" positive-text="确定" @positive-click="clean_history()">
+            <template #trigger>
+              <n-button type="error">清屏</n-button>
+            </template>
+            确认清空所有会话记录?
+          </n-popconfirm>
         </n-space>
       </n-gi>
-      <n-gi :span="2" style="display: flex; justify-content: center;align-items: center;">
+      <n-gi :span="1" style="display: flex; justify-content: center;align-items: center;">
         <n-space vertical justify="space-between" align="center">
-          <n-button type="primary" @click="export_txt()">导出会话</n-button>
+          <n-button type="primary" @click="export_txt()">会话导出</n-button>
           <n-upload :show-file-list="false" @change="fileChange" >
-            <n-button>导入之前的对话</n-button>
+            <n-button>会话导入</n-button>
           </n-upload>
         </n-space>
       </n-gi>

@@ -33,20 +33,12 @@ class Message {
 class ExhibitMessage {
   speaker: string;
   text: string;
-  select: Boolean;
+  select: boolean;
 
   constructor(msg: {speaker:string, text: string}) {
     this.speaker = msg.speaker;
     this.text = msg.text;
     this.select = true;
-  }
-
-  set select(select: boolean): void {
-    this.select = select;
-  }
-
-  get select(): boolean {
-    return this.select;
   }
 
   static from(msg: Message): ExhibitMessage {
@@ -66,6 +58,16 @@ class ExhibitMessage {
     });
     result.select = msg.select;
     return result;
+  }
+
+  get exhibit_speaker(): string {
+    if (this.speaker === 'user') {
+      return "用户"
+    } else if (this.speaker === 'assistant') {
+      return "助手"
+    } else {
+      return ""
+    }
   }
 
   to(): Message {
