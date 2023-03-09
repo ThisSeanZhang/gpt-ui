@@ -1,15 +1,20 @@
 # Over View [![Build Status](https://drone.whileaway.io/api/badges/ThisSeanZhang/gpt-ui/status.svg)](https://drone.whileaway.io/ThisSeanZhang/gpt-ui)
 A Very Simple GPT PAI UI 
 
+# Demo
+![](./docs/20230309153623.png)
+
 # Plan
 - [x] 可以使用自己的 API key
 - [x] 可以自定义想要的设定
 - [x] 可以选择哪些作为对话上下文
 - [x] 支持对话的导出导入
+- [x] 优化 UI
+- [x] 支持模型的选择
 
-- [ ] 优化 UI
-- [ ] 支持模型的选择
+# Next
 - [ ] 支持其他 API
+...
 
 # Deploy
 ## Docker Image

@@ -41,6 +41,14 @@ class ExhibitMessage {
     this.select = true;
   }
 
+  set select(select: boolean): void {
+    this.select = select;
+  }
+
+  get select(): boolean {
+    return this.select;
+  }
+
   static from(msg: Message): ExhibitMessage {
     return new ExhibitMessage(msg);
   }
