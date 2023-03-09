@@ -1,6 +1,6 @@
 kind: pipeline
 type: docker
-name: default
+name: build-and-push
 
 environment:
   version: 0.0.2
@@ -75,4 +75,42 @@ volumes:
     path: /tmp/rust_cache
 node:
   la24: latest
+
+--- 
+kind: pipeline
+type: docker
+name: deploy-ui
+
+depends_on:
+- build-and-push
+
+environment:
+  version: 0.0.2
+
+steps:
+- name: deploy ui
+  image: docker/compose
+  commands:
+  - export VERSION=$version
+  - cd /gpt-ui
+  - ls -la
+  - echo GPT_UI_TAG=$${VERSION} > .env
+  - cat .env
+  - docker logs gpt-ui &> ./log_$(date +%Y%m%d_%H-%M-%S).log
+  - docker-compose up --force-recreate -d
+  volumes:
+  - name: docker
+    path: /var/run/docker.sock
+  - name: gpt-ui
+    path: /gpt-ui
+
+volumes:
+- name: docker
+  host:
+    path: /var/run/docker.sock
+- name: gpt-ui
+  host:
+    path: /d/gpt-ui
+node:
+  la28: latest
 

@@ -37,6 +37,22 @@ Options:
   -h, --help                  Print help
 
 ```
+## Compose
+
+```conf
+# .env
+GPT_UI_TAG=0.0.2
+```
+
+```yaml
+# docker-compose.yaml file
+version: "3.5"
+services:
+  gpt-ui:
+    image: thisseanzhang/gpt-ui:${GPT_UI_TAG}
+    ports:
+      - "65525:65525"
+```
 
 # License
 This project is licensed under [MIT license](https://github.com/ThisSeanZhang/gpt-ui/blob/main/LICENSE).
