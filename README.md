@@ -2,7 +2,7 @@
 A Very Simple GPT PAI UI 
 
 # Demo
-![](./docs/20230309153623.png)
+![](./docs/overview.png)
 
 # Plan
 - [x] 可以使用自己的 API key
@@ -10,23 +10,23 @@ A Very Simple GPT PAI UI
 - [x] 可以选择哪些作为对话上下文
 - [x] 支持对话的导出导入
 - [x] 优化 UI
-- [x] 支持模型的选择
 
 # Next
+- [ ] 支持模型的选择(目前只能选 gpt-3.5-turbo)
 - [ ] 支持其他 API
 ...
 
 # Deploy
 ## Docker Image
 ```shell
-docker pull thisseanzhang/gpt-ui:0.0.1
+docker pull thisseanzhang/gpt-ui:0.0.2
 
-docker run --rm -p 65525:65525 thisseanzhang/gpt-ui:0.0.1
+docker run --rm -p 65525:65525 thisseanzhang/gpt-ui:0.0.2
 ```
 
 if want more info
 ```shell
-docker run --rm thisseanzhang/gpt-ui:0.0.1 ./backend --help
+docker run --rm thisseanzhang/gpt-ui:0.0.2 ./backend --help
 
 Usage: backend [OPTIONS]
 
