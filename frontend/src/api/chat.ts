@@ -51,7 +51,7 @@ class ExhibitMessage {
       text: choice.message.text
     });
   }
-  static from_temp(msg: {speaker: string, text: string, select: Boolean}): ExhibitMessage {
+  static from_temp(msg: {speaker: string, text: string, select: boolean}): ExhibitMessage {
     let result = new ExhibitMessage({
       speaker:msg.speaker,
       text: msg.text

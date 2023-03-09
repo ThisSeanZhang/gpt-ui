@@ -128,7 +128,7 @@ function fileChange(options: { file: UploadFileInfo, fileList: Array<UploadFileI
     const reader = new FileReader();
     reader.onload = () => {
       try {
-        const json = JSON.parse(reader.result as string) as {speaker: string, text: string, select: Boolean}[];
+        const json = JSON.parse(reader.result as string) as {speaker: string, text: string, select: boolean}[];
         history.value = json.map(e => ExhibitMessage.from_temp(e));
       } catch (e) {
         console.error(e);
