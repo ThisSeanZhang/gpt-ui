@@ -1,15 +1,19 @@
 <script setup lang="ts">
-import { UploadFileInfo, useNotification } from 'naive-ui';
-import { ref } from 'vue'
+import { NScrollbar, UploadFileInfo, useNotification } from 'naive-ui';
+import { ref} from 'vue'
 import api from '../api'
 import { ChatReq, Message, ExhibitMessage, ChatResp, RespChoice, RespUsage } from '../api/chat';
 import { Delete, Copy } from '@vicons/carbon'
 import { AxiosError } from 'axios';
 
-const notification = useNotification()
+import useKeyStore from '../store/key'
+import usePromptStore from '../store/prompt'
+// import Scrollbar from 'naive-ui/es/scrollbar/src/Scrollbar';
 
-const token = ref("")
-const token_label = ref("")
+const notification = useNotification()
+const keyStore = useKeyStore()
+const promptStore = usePromptStore();
+
 const model_choice = ref("gpt-3.5-turbo")
 const temperature = ref(6)
 const model_options = [
@@ -35,7 +39,7 @@ const model_options = [
   // },
 ];
 const user_messgae = ref<string>("")
-const character_setting = ref("你是一个很棒的助手")
+
 const submitable = ref(false)
 const history = ref<ExhibitMessage[]>([]);
 
@@ -88,6 +92,8 @@ async function submit(force: boolean = false) {
     );
     console.log(chatResp);
     history.value = history.value.concat(chatResp.choices.map(e => e.message).map(ExhibitMessage.from))
+
+    // TODO: 滚到底部, 但是不知道怎么做
     notification.success({
       duration: 1000,
       content: '请求成功, []~(￣▽￣)~*'
@@ -108,10 +114,10 @@ async function submit(force: boolean = false) {
 }
 
 function buildRequest(): ChatReq {
-  let req = new ChatReq(token.value, model_choice.value)
+  let req = new ChatReq(keyStore.current.value, model_choice.value)
   req.temperature = temperature.value / 10;
   let msgs = [];
-  msgs.push(new Message("system", character_setting.value));
+  msgs.push(new Message("system", promptStore.current.value));
   history.value.filter(e => e.select).forEach(e => msgs.push(e.to()))
   req.messages = msgs;
   return req
@@ -164,22 +170,23 @@ async function copy_text(index: number) {
     })
   }
 }
+
+const select_index = ref<number | null>(keyStore.current.value === "" ? null : keyStore.all_selects.length - 1)
+function handleUpdateValue (value: number | null) {
+  keyStore.SELECT(value)
+}
 </script>
 
 <template>
+  <!-- {{ keyStore.current }} -->
 <div style="height: 100%; position: relative">
 <n-layout position="absolute">
   <n-layout-header style="height: 64px; padding: 5px;">
     <n-grid :cols="5" style="height: 64px;" :x-gap="5">
       <n-gi :span="1" style="display: flex; justify-content: center;align-items: center;">
-          <n-input-group >
-            <!-- <n-input-group-label>请输入API Key 标签(以便选择)</n-input-group-label> -->
-            <!-- <n-input v-model="token_label" :style="{ width: '66%' }" placeholder="请输入API Key 标签(以便选择)"/> -->
+        <n-input-group >
             <n-input-group-label>API Key</n-input-group-label>
-            <n-input v-model:value="token" placeholder="API Key"/>
-            <!-- <n-button type="primary" ghost>
-              添加
-            </n-button> -->
+            <n-select v-model:value="select_index" @update:value="handleUpdateValue" :options="keyStore.all_selects" />
           </n-input-group>
       </n-gi>
       <n-gi :span="1" style="display: flex; justify-content: center;align-items: center;">
@@ -203,15 +210,13 @@ async function copy_text(index: number) {
         </n-input-group>
       </n-gi>
       <n-gi :span="2" style="display: flex; justify-content: center;align-items: center;">
-        <n-input-group>
-          <n-input-group-label>在此输入 GPT 的设定</n-input-group-label>
-          <n-input v-model:value="character_setting" type="textarea" rows="2" />
-        </n-input-group>
+        <n-input v-model:value="promptStore.current.value" type="textarea" rows="2" />
       </n-gi>
     </n-grid>
   </n-layout-header>
   <!-- head end -->
   <n-layout-content style="height: calc(100% - 164px)" content-style="padding: 24px;" :native-scrollbar=false >
+    <n-scrollbar ref="chat_context">
     <n-thing content-indented  v-for="(each, index) of history" style="margin: 5px 0px; border: 0 solid">
       <template #avatar>
         <n-checkbox @update:checked="check => each.select = check " :checked="each.select.valueOf()" />
@@ -232,12 +237,13 @@ async function copy_text(index: number) {
     </template>
       {{ each.text }}
     </n-thing>
+    </n-scrollbar>
   </n-layout-content>
   <!-- content end -->
   <n-layout-footer position="absolute" style="height: 100px; padding: 10px;">
     <n-grid :cols="20" style="height: 64px;" :x-gap="5">
       <n-gi :span="16" style="display: flex; justify-content: center;align-items: center;">
-        <n-input v-model:value="user_messgae" type="textarea" rows="2" placeholder="请在此处输入对话"/>
+        <n-input @keyup.enter="submit()" v-model:value="user_messgae" type="textarea" rows="2" placeholder="请在此处输入对话"/>
       </n-gi>
       <n-gi :span="2">
         <n-spin :show="submitable" style="display: flex; justify-content: center;align-items: center;">

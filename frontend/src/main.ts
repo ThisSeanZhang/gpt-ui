@@ -1,6 +1,8 @@
 import { createApp } from 'vue'
 import './style.css'
 import App from './App.vue'
+import store from './store';
+import router from './router';
 import {
   // create naive ui
   create,
@@ -24,6 +26,9 @@ import {
   NIcon,
   NPopconfirm,
   NSpin,
+  NDivider,
+  NRadioGroup,
+  NRadioButton,
 } from 'naive-ui'
 
 const naive = create({
@@ -47,7 +52,14 @@ components: [
   NIcon,
   NPopconfirm,
   NSpin,
+  NDivider,
+  NRadioGroup,
+  NRadioButton,
 ]
 })
 
-createApp(App).use(naive).mount('#app')
+createApp(App)
+  .use(store)
+  .use(naive)
+  .use(router)
+  .mount('#app')
