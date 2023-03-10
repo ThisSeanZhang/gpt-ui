@@ -3,7 +3,7 @@ type: docker
 name: build-and-push
 
 environment:
-  version: 0.0.2
+  version: 0.0.3
 steps:
 - name: build-frontend
   image: node:alpine
@@ -85,7 +85,7 @@ depends_on:
 - build-and-push
 
 environment:
-  version: 0.0.2
+  version: 0.0.3
 
 steps:
 - name: deploy ui
@@ -96,6 +96,7 @@ steps:
   - ls -la
   - echo GPT_UI_TAG=$${VERSION} > .env
   - cat .env
+  - docker pull thisseanzhang/gpt-ui:$${VERSION}
   - docker logs gpt-ui &> ./log_$(date +%Y%m%d_%H-%M-%S).log
   - docker-compose up --force-recreate -d
   volumes:
