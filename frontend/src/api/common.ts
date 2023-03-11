@@ -35,3 +35,7 @@ export function get_date(): string {
   let day = date.getDate(); // get the day of the month (1-31)
   return `${year}-${month < 10 ? `0${month}` : month}-${day < 10 ? `0${day}` : day}`;
 }
+
+export function sleep(duration: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, duration))
+}

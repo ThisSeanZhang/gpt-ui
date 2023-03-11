@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { NScrollbar, UploadFileInfo, useNotification } from 'naive-ui';
-import { ref} from 'vue'
+import { nextTick, ref } from 'vue'
 import api from '../api'
 import { ChatReq, Message, ExhibitMessage, ChatResp, RespChoice, RespUsage } from '../api/chat';
 import { Delete, Copy, SendAlt, Restart, Clean, DocumentExport, DocumentImport } from '@vicons/carbon'
@@ -13,6 +13,8 @@ import usePromptStore from '../store/prompt'
 const notification = useNotification()
 const keyStore = useKeyStore()
 const promptStore = usePromptStore();
+
+const scrollbar = ref<typeof NScrollbar|null>()
 
 const model_choice = ref("gpt-3.5-turbo")
 const temperature = ref(6)
@@ -56,6 +58,7 @@ async function submit(force: boolean = false) {
       return;
     }
     history.value.push(new ExhibitMessage({speaker: "user", text: message}));
+    auto_scroll()
   }
 
   submitable.value = true;
@@ -93,7 +96,9 @@ async function submit(force: boolean = false) {
     console.log(chatResp);
     history.value = history.value.concat(chatResp.choices.map(e => e.message).map(ExhibitMessage.from))
 
-    // TODO: 滚到底部, 但是不知道怎么做
+    // 滚动到底下
+    auto_scroll()
+
     notification.success({
       duration: 1000,
       content: '请求成功, []~(￣▽￣)~*'
@@ -141,6 +146,7 @@ function fileChange(options: { file: UploadFileInfo, fileList: Array<UploadFileI
       try {
         const json = JSON.parse(reader.result as string) as {speaker: string, text: string, select: boolean}[];
         history.value = json.map(e => ExhibitMessage.from_temp(e));
+        auto_scroll()
       } catch (e) {
         console.error(e);
       }
@@ -174,6 +180,17 @@ async function copy_text(index: number) {
 const select_index = ref<number | null>(keyStore.current.value === "" ? null : keyStore.all_selects.length - 1)
 function handleUpdateValue (value: number | null) {
   keyStore.SELECT(value)
+}
+
+function auto_scroll() {
+  nextTick(() => {
+    if (scrollbar.value !== null && scrollbar.value !== undefined) {
+      scrollbar.value.scrollBy({
+        top: 1000,
+        behavior: 'smooth'
+      })
+    }
+  })
 }
 </script>
 
@@ -215,28 +232,30 @@ function handleUpdateValue (value: number | null) {
     </n-grid>
   </n-layout-header>
   <!-- head end -->
-  <n-layout-content style="height: calc(100% - 144px)" content-style="padding: 24px;" :native-scrollbar=false >
-    <n-scrollbar ref="chat_context">
-    <n-thing content-indented  v-for="(each, index) of history" style="margin: 5px 0px; border: 0 solid">
-      <template #avatar>
-        <n-checkbox @update:checked="check => each.select = check " :checked="each.select.valueOf()" />
-      </template>
-      <template #header>
-        {{each.exhibit_speaker}}
-      </template>
-    <template #header-extra>
-      <n-space>
-        <n-popconfirm :show-icon="false" negative-text="取消" positive-text="确定" @positive-click="clean_history(index)">
-          <template #trigger>
-            <n-button text type="error"><n-icon><Delete /></n-icon></n-button>
+  <n-layout-content style="height: calc(100% - 144px)">
+    <n-scrollbar ref="scrollbar" style="height: 100%">
+      <n-space style="padding:5px 20px;" vertical>
+        <n-thing content-indented  v-for="(each, index) of history" style="margin: 5px 0px; border: 0 solid">
+          <template #avatar>
+            <n-checkbox @update:checked="check => each.select = check " :checked="each.select.valueOf()" />
           </template>
-          确认删除?
-        </n-popconfirm>
-        <n-button text type="info" @click="copy_text(index)"><n-icon><Copy /></n-icon></n-button>
+          <template #header>
+            {{each.exhibit_speaker}}
+          </template>
+        <template #header-extra>
+          <n-space>
+            <n-popconfirm :show-icon="false" negative-text="取消" positive-text="确定" @positive-click="clean_history(index)">
+              <template #trigger>
+                <n-button text type="error"><n-icon><Delete /></n-icon></n-button>
+              </template>
+              确认删除?
+            </n-popconfirm>
+            <n-button text type="info" @click="copy_text(index)"><n-icon><Copy /></n-icon></n-button>
+          </n-space>
+        </template>
+          {{ each.text }}
+        </n-thing>
       </n-space>
-    </template>
-      {{ each.text }}
-    </n-thing>
     </n-scrollbar>
   </n-layout-content>
   <!-- content end -->
@@ -306,42 +325,6 @@ function handleUpdateValue (value: number | null) {
         </n-grid>
       </n-gi>
     </n-grid>
-
-    <!-- <n-grid :cols="20" style="height: 64px;" :x-gap="5">
-      <n-gi :span="16" style="display: flex; justify-content: center;align-items: center;">
-        <n-input @keyup.enter="submit()" v-model:value="user_messgae" type="textarea" rows="2" placeholder="请在此处输入对话"/>
-      </n-gi>
-      <n-gi :span="2">
-        <n-spin :show="submitable" style="display: flex; justify-content: center;align-items: center;">
-          <n-space vertical justify="space-between" align="center">
-            <n-button type="primary" :disabled="submitable" @click="submit()">
-              提交
-            </n-button>
-            <n-button type="primary" dashed :disabled="submitable" @click="submit(true)">
-              再生成一次
-            </n-button>
-          </n-space>
-        </n-spin>
-      </n-gi>
-      <n-gi :span="1" style="display: flex; justify-content: center;align-items: center;">
-        <n-space vertical justify="space-between" align="center">
-          <n-popconfirm :show-icon="false" negative-text="取消" positive-text="确定" @positive-click="clean_history()">
-            <template #trigger>
-              <n-button type="error">清屏</n-button>
-            </template>
-            确认清空所有会话记录?
-          </n-popconfirm>
-        </n-space>
-      </n-gi>
-      <n-gi :span="1" style="display: flex; justify-content: center;align-items: center;">
-        <n-space vertical justify="space-between" align="center">
-          <n-button type="primary" @click="export_txt()">会话导出</n-button>
-          <n-upload :show-file-list="false" @change="fileChange" >
-            <n-button>会话导入</n-button>
-          </n-upload>
-        </n-space>
-      </n-gi>
-    </n-grid> -->
   </n-layout-footer>
 </n-layout>
 </div>
