@@ -280,7 +280,8 @@ function auto_scroll() {
   <n-layout-footer position="absolute" style="height: 80px; padding: 10px;">
     <n-grid cols="10 1000:20" :x-gap="5">
       <n-gi span="8 1000:16">
-        <n-input @keyup.enter="submit()" v-model:value="user_messgae" type="textarea" rows="2" placeholder="请在此处输入对话"/>
+        <n-input @keyup.ctrl.enter="submit()" @keyup.alt.enter="submit()" v-model:value="user_messgae" type="textarea" rows="2" 
+        placeholder="请在此处输入对话, 电脑请使用 ctrl + enter 或者 alt + enter 快捷键发送消息"/>
       </n-gi>
       <!-- when less then 1000px -->
       <n-gi span="2 1000:0">
