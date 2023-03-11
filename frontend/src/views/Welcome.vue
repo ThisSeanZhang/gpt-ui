@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { NScrollbar, UploadFileInfo, useNotification } from 'naive-ui';
+import hljs from 'highlight.js';
+import 'highlight.js/styles/monokai.css';
+import MarkdownIt from 'markdown-it'
 import { nextTick, ref } from 'vue'
 import api from '../api'
 import { ChatReq, Message, ExhibitMessage, ChatResp, RespChoice, RespUsage } from '../api/chat';
@@ -10,6 +13,20 @@ import useKeyStore from '../store/key'
 import usePromptStore from '../store/prompt'
 // import Scrollbar from 'naive-ui/es/scrollbar/src/Scrollbar';
 
+const markdownIt = MarkdownIt({
+  highlight: function (str, lang) {
+    if (lang && hljs.getLanguage(lang)) {
+      try {
+        // return hljs.highlight(str, { language: lang }).value;
+        return '<pre class="hljs"><code>' +
+               hljs.highlight(str, { language: lang, ignoreIllegals: true }).value +
+               '</code></pre>';
+      } catch (e) {console.log(e)}
+    }
+
+    return ''; // use external default escaping
+  }
+});
 const notification = useNotification()
 const keyStore = useKeyStore()
 const promptStore = usePromptStore();
@@ -253,7 +270,8 @@ function auto_scroll() {
             <n-button text type="info" @click="copy_text(index)"><n-icon><Copy /></n-icon></n-button>
           </n-space>
         </template>
-          {{ each.text }}
+        <div v-html="markdownIt.render(each.text)"></div>
+          <!-- {{ each.text }} -->
         </n-thing>
       </n-space>
     </n-scrollbar>

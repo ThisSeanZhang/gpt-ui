@@ -28,6 +28,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         [null, {\
           "packageLocation": "./",\
           "packageDependencies": [\
+            ["@types/markdown-it", "npm:12.2.3"],\
             ["@vicons/antd", "npm:0.12.0"],\
             ["@vicons/carbon", "npm:0.12.0"],\
             ["@vicons/fa", "npm:0.12.0"],\
@@ -38,6 +39,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@vicons/tabler", "npm:0.12.0"],\
             ["@vitejs/plugin-vue", "virtual:b6399fb35d8c14e5f7b0df03bfb58ca82645e1f114f2e91f8a3d95e75a7a878275fb750554a0147d6933af8eecd796b3242324f9c6965b8f178e4c43e8c6c615#npm:4.0.0"],\
             ["axios", "npm:1.3.4"],\
+            ["highlight.js", "npm:11.7.0"],\
+            ["markdown-it", "npm:13.0.1"],\
             ["naive-ui", "virtual:b6399fb35d8c14e5f7b0df03bfb58ca82645e1f114f2e91f8a3d95e75a7a878275fb750554a0147d6933af8eecd796b3242324f9c6965b8f178e4c43e8c6c615#npm:2.34.3"],\
             ["pinia", "virtual:b6399fb35d8c14e5f7b0df03bfb58ca82645e1f114f2e91f8a3d95e75a7a878275fb750554a0147d6933af8eecd796b3242324f9c6965b8f178e4c43e8c6c615#npm:2.0.33"],\
             ["typescript", "patch:typescript@npm%3A4.9.5#~builtin<compat/typescript>::version=4.9.5&hash=23ec76"],\
@@ -399,6 +402,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["@types/linkify-it", [\
+        ["npm:3.0.2", {\
+          "packageLocation": "./.yarn/cache/@types-linkify-it-npm-3.0.2-ccb33717e7-dff8f10faf.zip/node_modules/@types/linkify-it/",\
+          "packageDependencies": [\
+            ["@types/linkify-it", "npm:3.0.2"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["@types/lodash", [\
         ["npm:4.14.191", {\
           "packageLocation": "./.yarn/cache/@types-lodash-npm-4.14.191-67a04a969b-ba0d5434e1.zip/node_modules/@types/lodash/",\
@@ -414,6 +426,26 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@types/lodash-es", "npm:4.17.6"],\
             ["@types/lodash", "npm:4.14.191"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["@types/markdown-it", [\
+        ["npm:12.2.3", {\
+          "packageLocation": "./.yarn/cache/@types-markdown-it-npm-12.2.3-ef47108ac6-868824a3e4.zip/node_modules/@types/markdown-it/",\
+          "packageDependencies": [\
+            ["@types/markdown-it", "npm:12.2.3"],\
+            ["@types/linkify-it", "npm:3.0.2"],\
+            ["@types/mdurl", "npm:1.0.2"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["@types/mdurl", [\
+        ["npm:1.0.2", {\
+          "packageLocation": "./.yarn/cache/@types-mdurl-npm-1.0.2-5b57c94d95-79c7e523b3.zip/node_modules/@types/mdurl/",\
+          "packageDependencies": [\
+            ["@types/mdurl", "npm:1.0.2"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -789,6 +821,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["argparse", [\
+        ["npm:2.0.1", {\
+          "packageLocation": "./.yarn/cache/argparse-npm-2.0.1-faff7999e6-83644b5649.zip/node_modules/argparse/",\
+          "packageDependencies": [\
+            ["argparse", "npm:2.0.1"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["async-validator", [\
         ["npm:4.2.5", {\
           "packageLocation": "./.yarn/cache/async-validator-npm-4.2.5-4d61110c66-3e3d891a2e.zip/node_modules/async-validator/",\
@@ -1065,6 +1106,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["entities", [\
+        ["npm:3.0.1", {\
+          "packageLocation": "./.yarn/cache/entities-npm-3.0.1-21eeb201ba-aaf7f12033.zip/node_modules/entities/",\
+          "packageDependencies": [\
+            ["entities", "npm:3.0.1"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["env-paths", [\
         ["npm:2.2.1", {\
           "packageLocation": "./.yarn/cache/env-paths-npm-2.2.1-7c7577428c-65b5df55a8.zip/node_modules/env-paths/",\
@@ -1253,6 +1303,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./",\
           "packageDependencies": [\
             ["gpt-ui", "workspace:."],\
+            ["@types/markdown-it", "npm:12.2.3"],\
             ["@vicons/antd", "npm:0.12.0"],\
             ["@vicons/carbon", "npm:0.12.0"],\
             ["@vicons/fa", "npm:0.12.0"],\
@@ -1263,6 +1314,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@vicons/tabler", "npm:0.12.0"],\
             ["@vitejs/plugin-vue", "virtual:b6399fb35d8c14e5f7b0df03bfb58ca82645e1f114f2e91f8a3d95e75a7a878275fb750554a0147d6933af8eecd796b3242324f9c6965b8f178e4c43e8c6c615#npm:4.0.0"],\
             ["axios", "npm:1.3.4"],\
+            ["highlight.js", "npm:11.7.0"],\
+            ["markdown-it", "npm:13.0.1"],\
             ["naive-ui", "virtual:b6399fb35d8c14e5f7b0df03bfb58ca82645e1f114f2e91f8a3d95e75a7a878275fb750554a0147d6933af8eecd796b3242324f9c6965b8f178e4c43e8c6c615#npm:2.34.3"],\
             ["pinia", "virtual:b6399fb35d8c14e5f7b0df03bfb58ca82645e1f114f2e91f8a3d95e75a7a878275fb750554a0147d6933af8eecd796b3242324f9c6965b8f178e4c43e8c6c615#npm:2.0.33"],\
             ["typescript", "patch:typescript@npm%3A4.9.5#~builtin<compat/typescript>::version=4.9.5&hash=23ec76"],\
@@ -1466,6 +1519,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["linkify-it", [\
+        ["npm:4.0.1", {\
+          "packageLocation": "./.yarn/cache/linkify-it-npm-4.0.1-9c7d5a3cd6-3e0a299212.zip/node_modules/linkify-it/",\
+          "packageDependencies": [\
+            ["linkify-it", "npm:4.0.1"],\
+            ["uc.micro", "npm:1.0.6"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["lodash", [\
         ["npm:4.17.21", {\
           "packageLocation": "./.yarn/cache/lodash-npm-4.17.21-6382451519-eb835a2e51.zip/node_modules/lodash/",\
@@ -1532,6 +1595,29 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["promise-retry", "npm:2.0.1"],\
             ["socks-proxy-agent", "npm:7.0.0"],\
             ["ssri", "npm:9.0.1"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["markdown-it", [\
+        ["npm:13.0.1", {\
+          "packageLocation": "./.yarn/cache/markdown-it-npm-13.0.1-dcb1a8675c-faf5891d38.zip/node_modules/markdown-it/",\
+          "packageDependencies": [\
+            ["markdown-it", "npm:13.0.1"],\
+            ["argparse", "npm:2.0.1"],\
+            ["entities", "npm:3.0.1"],\
+            ["linkify-it", "npm:4.0.1"],\
+            ["mdurl", "npm:1.0.1"],\
+            ["uc.micro", "npm:1.0.6"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["mdurl", [\
+        ["npm:1.0.1", {\
+          "packageLocation": "./.yarn/cache/mdurl-npm-1.0.1-054d974269-71731ecba9.zip/node_modules/mdurl/",\
+          "packageDependencies": [\
+            ["mdurl", "npm:1.0.1"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -2185,6 +2271,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/typescript-patch-72dc6f164f-ab417a2f39.zip/node_modules/typescript/",\
           "packageDependencies": [\
             ["typescript", "patch:typescript@npm%3A4.9.5#~builtin<compat/typescript>::version=4.9.5&hash=23ec76"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["uc.micro", [\
+        ["npm:1.0.6", {\
+          "packageLocation": "./.yarn/cache/uc.micro-npm-1.0.6-36f3dc2fc4-6898bb5563.zip/node_modules/uc.micro/",\
+          "packageDependencies": [\
+            ["uc.micro", "npm:1.0.6"]\
           ],\
           "linkType": "HARD"\
         }]\
