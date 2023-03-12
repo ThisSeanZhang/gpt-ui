@@ -1,8 +1,9 @@
 # Over View [![Build Status](https://drone.whileaway.io/api/badges/ThisSeanZhang/gpt-ui/status.svg)](https://drone.whileaway.io/ThisSeanZhang/gpt-ui)
-A Very Simple GPT PAI UI 
+A Very Simple GPT API UI 
 
 # Demo
 ![](./docs/overview.png)
+![](./docs/chat.png)
 
 # Plan
 - [x] 可以使用自己的 API key
@@ -19,14 +20,14 @@ A Very Simple GPT PAI UI
 # Deploy
 ## Docker Image
 ```shell
-docker pull thisseanzhang/gpt-ui:0.0.2
+docker pull thisseanzhang/gpt-ui:0.0.3
 
-docker run --rm -p 65525:65525 thisseanzhang/gpt-ui:0.0.2
+docker run --rm -p 65525:65525 thisseanzhang/gpt-ui:0.0.3
 ```
 
 if want more info
 ```shell
-docker run --rm thisseanzhang/gpt-ui:0.0.2 ./backend --help
+docker run --rm thisseanzhang/gpt-ui:0.0.3 ./backend --help
 
 Usage: backend [OPTIONS]
 
@@ -41,7 +42,7 @@ Options:
 
 ```conf
 # .env
-GPT_UI_TAG=0.0.2
+GPT_UI_TAG=0.0.3
 ```
 
 ```yaml
