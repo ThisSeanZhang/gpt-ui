@@ -13,7 +13,7 @@ pub struct ChatReq {
     pub n: Option<i32>,
     pub stream: Option<bool>,
     pub stop: Option<Vec<String>>,
-    pub max_tokens: Option<i32>,
+    pub max_tokens: Option<u16>,
     pub presence_penalty: Option<f64>,
     pub frequency_penalty: Option<f64>,
     pub logit_bias: Option<std::collections::HashMap<String, f64>>,
@@ -38,7 +38,7 @@ impl ChatReq {
         .build()?);
       }
       CreateChatCompletionRequestArgs::default()
-        .max_tokens(512u16)
+        .max_tokens(self.max_tokens.unwrap_or(512u16))
         .model(self.model)
         .messages(messages)
         .build()

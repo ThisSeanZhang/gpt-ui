@@ -120,6 +120,20 @@ async function submit(force: boolean = false) {
       duration: 1000,
       content: '请求成功, []~(￣▽￣)~*'
     })
+
+    if (chatResp.usage.prompt_tokens >= 2048) {
+      notification.warning({
+        title: '对话容量警告',
+        content: 'GPT 的上下文已达接口限制的一半, 请将部分不重要对话前的勾选框去掉, 以保证 GPT 回应时有足够的容量'
+      })
+    }
+
+    if (chatResp.usage.prompt_tokens >= 3072) {
+      notification.warning({
+        title: '对话容量警告',
+        content: 'GPT 的上下文已达接口限制的 3/4, 请将部分不重要对话前的勾选框去掉, 以保证 GPT 回应时有足够的容量'
+      })
+    }
   } catch (e) {
     let message = e;
     if (e instanceof AxiosError) {
