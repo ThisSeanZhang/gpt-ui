@@ -69,7 +69,7 @@ async function submit(force: boolean = false) {
     user_messgae.value = "";
     if (message.length <= 0) {
       notification.error({
-        duration: 1000,
+        duration: 3000,
         content: `无法发送空白的消息`
       })
       return;
@@ -83,7 +83,7 @@ async function submit(force: boolean = false) {
     let data = buildRequest();
     if (data.messages.length <= 1) {
       notification.error({
-        duration: 1000,
+        duration: 5000,
         content: `没有选中任何消息`
       })
       return;
@@ -141,7 +141,6 @@ async function submit(force: boolean = false) {
     }
     console.log(e);
     notification.error({
-      duration: 5000,
       content: `请求失败, ${message}`
     })
   } finally {

@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { SelectOption } from 'naive-ui';
+import { SelectOption, useNotification } from 'naive-ui';
 import { ref, watch } from 'vue';
 import { ApiKeyPair, get_date } from '../api/common';
 import useKeyStore from '../store/key'
 import usePromptStore from '../store/prompt'
 import { useRouter, useRoute } from 'vue-router'
 
+const notification = useNotification()
 const route = useRoute();
 const router = useRouter();
 const keyStore = useKeyStore()
@@ -14,6 +15,15 @@ const pair = ref(new ApiKeyPair("", ""))
 
 const select_index = ref<number | null>(keyStore.current.value === "" ? null : keyStore.all_selects.length - 1)
 const select_prompt = ref(promptStore.current.label)
+
+watch(select_index, (n, _) => {
+  if (n !== null) {
+    notification.success({
+      duration: 3000,
+      content: `已填充 API KEY: ${keyStore.current.label}, 可以开始聊天了 !`
+    })
+  }
+}, { immediate: true })
 
 console.log(route.params.key)
 let in_key = typeof route.params.key === 'string' ? route.params.key : route.params.key.join();
@@ -74,19 +84,15 @@ function start() {
       </n-divider>
     </n-gi>
     <n-gi class="each-item">
-      <n-space>
-        <n-radio-group v-model:value="select_prompt" name="radiobuttongroup1">
-          <n-radio-button
-            v-for="prompt in promptStore.prompts"
-            :key="prompt.label"
-            :value="prompt.label"
-            :label="prompt.label"
-          />
-          <n-radio-button
-            value="self"
-            label="自定义"
-          />
-        </n-radio-group>
+      <n-space style="max-width: 700px;" justify="center">
+        <n-button v-for="prompt in promptStore.prompts"
+          type="primary" :ghost="select_prompt ===  prompt.label" @click="select_prompt = prompt.label">
+            {{ prompt.label }}
+        </n-button>
+        <n-button type="info" 
+          :ghost="select_prompt ===  'self'" @click="select_prompt = 'self'">
+          自定义
+        </n-button>
       </n-space>
 
     </n-gi>
