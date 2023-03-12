@@ -17,7 +17,7 @@ class ChatReq {
     this.token = token;
     this.model = model;
     this.messages = [];
-    this.max_tokens = 4096;
+    this.max_tokens = 2048;
   }
 }
 
